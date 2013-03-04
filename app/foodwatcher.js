@@ -93,17 +93,22 @@ module.exports = function () {
             // Chat message
             } else if (stanza.is('message')) {
                 if ('chat' === stanza.attrs.type) {
-                    /*cmd = command.parse(body);
+                    cmd = command.parse(stanza.getChildText('body'));
 
-                    backend.get(cmd, function (err, result) {
-                        if (err) {
-                            result = err;
-                        }
+                    if (!cmd.type) {
+                        privates.sendMessage(recipient, 'Unknown command');
+                    } else {
+                        privates.sendMessage(recipient, cmd.type);
+                        /*backend.get(cmd, function (err, result) {
+                            if (err) {
+                                result = err;
+                            }
 
-                        privates.sendMessage(recipient, result);
-                    });*/
+                            privates.sendMessage(recipient, result);
+                        });*/
+                    }
 
-                    privates.sendMessage(recipient, 'Halloooooooo');
+                    
                 }
             }
     	};

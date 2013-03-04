@@ -50,12 +50,14 @@ module.exports = function () {
 				error,
 				tmp;
 
+			body = body.toLowerCase();
+
 			// parts[0] = The command
 			// parts[1] = The "mensa"
 
 			search : for (tmp in COMMANDS) {
 				if (COMMANDS.hasOwnProperty(tmp)) {
-					if (COMMANDS[tmp].indexOf(parts[0] !== -1)) {
+					if (COMMANDS[tmp].indexOf(parts[0]) !== -1) {
 						type = tmp;
 
 						break search;
@@ -63,7 +65,7 @@ module.exports = function () {
 				}
 			}
 
-			if (!(/mensen|help/.test(type)) && parts.length < 2) {
+			if (type && !(/mensen|help/.test(type)) && parts.length < 2) {
 				error = 'Naja. In welcher Mensa möchtest Du denn was essen?';
 			} else {
 				search : for (tmp in MENSEN) {
