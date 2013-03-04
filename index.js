@@ -15,7 +15,7 @@ var bot      = require('./app/foodwatcher')(),
 	var config;
 
 	try {
-		config = new Settings('./config/environment.js').gtalk;
+		config = new Settings(__dirname + '/config/gtalk.js').gtalk;
 
 		bot.startup(config);
 	} catch (e) {

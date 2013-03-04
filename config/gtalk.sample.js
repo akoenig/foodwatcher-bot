@@ -11,30 +11,32 @@
 module.exports = {
     common: {
         gtalk: {
-            status: "nom nom nom",
+            status: "Don't get hungry, keep watching! With FoodWatcher!",
             client: {
-                jid: "foodwatcher.bot@gmail.com"
-                password: "INSERT_YOUR_PASSWORD_HERE""",
+                jid: "foodwatcher.bot@gmail.com",
+                password: "INSERT_YOUR_PASSWORD_HERE",
                 host: "talk.google.com",
                 port: 5222,
                 reconnect: true
             },
             autoSubscribe: true,
-            commandSeparator: : /\s*\;\s*/
+            keepAlive: 10000,
+            commandSeparator: " "
         }
     },
     production: {
         gtalk: {
-            status: "nom nom nom",
+            status: "Don't get hungry, keep watching! With FoodWatcher!",
             client: {
-                jid: "foodwatcher.bot@gmail.com"
-                password: "INSERT_YOUR_PASSWORD_HERE""",
+                jid: "foodwatcher.bot@gmail.com",
+                password: "INSERT_YOUR_PASSWORD_HERE",
                 host: "talk.google.com",
                 port: 5222,
                 reconnect: true
             },
             autoSubscribe: true,
-            commandSeparator: : /\s*\;\s*/
+            keepAlive: 10000,
+            commandSeparator: " "
         }
     }
 };
