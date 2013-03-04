@@ -93,7 +93,7 @@ module.exports = function () {
             // Chat message
             } else if (stanza.is('message')) {
                 if ('chat' === stanza.attrs.type) {
-                    cmd = command.parse(body);
+                    /*cmd = command.parse(body);
 
                     backend.get(cmd, function (err, result) {
                         if (err) {
@@ -101,7 +101,9 @@ module.exports = function () {
                         }
 
                         privates.sendMessage(recipient, result);
-                    });
+                    });*/
+
+                    privates.sendMessage(recipient, 'Halloooooooo');
                 }
             }
     	};
@@ -132,6 +134,7 @@ module.exports = function () {
             }
 
             connection.addListener('stanza', privates.dispatch(config))
+            console.log("\n André, I'm alive!");
         }
     };
 };

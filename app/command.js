@@ -12,7 +12,7 @@ module.exports = function () {
 
 	'use strict';
 
-	const COMMANDS = {
+	var COMMANDS = {
 		'mensen':           ['mensen', 'mensas'],
 		'today':            ['heute', 'today'],
 		'tomorrow':         ['morgen', 'tomorrow'],
@@ -82,6 +82,6 @@ module.exports = function () {
 				mensa: mensa,
 				error: error
 			};
-		};
+		}
 	};
 };

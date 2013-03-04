@@ -11,7 +11,7 @@
 module.exports = function () {
 	'use strict';
 
-	const COMMANDS = ['mensen'];
+	//const COMMANDS = ['mensen'];
 
 	var privates = {},
 		mensen = [
