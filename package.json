@@ -1,0 +1,26 @@
+{
+  "name": "foodwatcher-bot",
+  "version": "0.1.0",
+  "description": "A little Google Talk bot which delivers the information from the Foodwatcher service.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/akoenig/foodwatcher-bot.git"
+  },
+  "keywords": [
+    "foodwatcher",
+    "bot",
+    "gtalk",
+    "google"
+  ],
+  "author": "André König <andre.koenig@gmail.com> (http://profile.lochkartenstanzer.de)",
+  "license": "MIT",
+  "dependencies": {
+    "node-xmpp": "0.3.x",
+    "request": "2.14.x",
+    "settings": "0.1.x"
+  }
+}
