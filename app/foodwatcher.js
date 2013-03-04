@@ -9,9 +9,12 @@
  */
 
 var backend = require('./backend')(),
+    command = require('./command')(),
     xmpp = require('node-xmpp');
 
 module.exports = function () {
+
+    'use strict';
 
     var connection,
         privates = {};
@@ -70,7 +73,10 @@ module.exports = function () {
     // DOCME
     privates.dispatch = function (config) {
     	return function (stanza) {
-            var recipient = stanza.attrs.from;
+            var cmd,
+                recipient;
+
+            recipient = stanza.attrs.from;
 
             // Something bad happened
             if('error' === stanza.attrs.type) {
@@ -87,7 +93,15 @@ module.exports = function () {
             // Chat message
             } else if (stanza.is('message')) {
                 if ('chat' === stanza.attrs.type) {
-                    privates.sendMessage(recipient, 'Hello world')
+                    cmd = command.parse(body);
+
+                    backend.get(cmd, function (err, result) {
+                        if (err) {
+                            result = err;
+                        }
+
+                        privates.sendMessage(recipient, result);
+                    });
                 }
             }
     	};

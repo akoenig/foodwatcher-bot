@@ -9,6 +9,8 @@
  */
 
 module.exports = function () {
+	'use strict';
+
 	const COMMANDS = ['mensen'];
 
 	var privates = {},

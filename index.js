@@ -8,6 +8,8 @@
  *
  */
 
+'use strict';
+
 var bot      = require('./app/foodwatcher')(),
 	Settings = require('settings');
 
