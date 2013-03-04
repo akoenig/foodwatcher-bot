@@ -41,61 +41,55 @@ module.exports = function () {
     };
 
     // DOCME
-    privates.becomeFriends = function (stanza) {
-    	var $subscriber;
-
-    	if (stanza.is('presence') && stanza.attrs.type === 'subscribe') {
-    	    $subscriber = new xmpp.Element('presence', {
-    	        to: stanza.attrs.from,
-    	        type: 'subscribed'
-    	    });
-			connection.send($subscriber);
-    	    privates.sendMessage(stanza.attrs.from, 'Hello mate!');
-    	}
-    };
-
-    // DOCME
     privates.sendMessage = function (recipient, message) {
-    	var $elm = new xmpp.Element('message', { to: recipient, type: 'chat' })
-    	                 .c('body').t(message);
+    	var $elm = new xmpp.Element('message', {
+            from: connection.jid,
+            to: recipient,
+            type: 'chat'
+        });
+
+        $elm.c('body').t(message);
+
     	connection.send($elm);
 
     	console.log('[message] SENT: ' + $elm.up().toString());
     };
 
+    privates.sendPresence = function (recipient, type) {
+        $response = new xmpp.Element('presence', {
+            from: connection.jid,
+            to: recipient,
+            type: type
+        });
+
+        connection.send($response);
+
+        console.log('[presence] SENT: ' + $elm.up().toString());
+    }
+
     // DOCME
     privates.dispatch = function (config) {
-    	return function (message) {
-    		var command;
+    	return function (stanza) {
+            var recipient = stanza.attrs.from;
 
-    		if (message.attrs.type === 'error') {
-    		    console.log('[ERROR] ' + message.toString());
-    		} else if (message.is('message')) {
-    			command = (function () {
-                    // The command structure:
-                    // [0] -> command; [...] arguments
-                    // e.g. mensen
-                    // e.g. heute airport
-    				var parts = message.getChildText('body').split(config.commandSeparator)
+            // Something bad happened
+            if('error' === stanza.attrs.type) {
+                console.log("[ERROR] " + stanza.toString());
+                return;
+            }
 
-    				if (backend.isValid(parts[0])) {
-                        return {
-                            type: parts[0],
-                            args: parts.slice(1, parts.length - 1)
-                        }
-    				} else {
-    					return;
-    				}
-    			}());
-
-    			if (!command) {
-	    			privates.sendMessage(message.attrs.from, 'unknown command');
-    			} else {
-                    backend.execute(command, function (result) {
-                        privates.sendMessage(message.attrs.from, result);
-                    });
+            // Subscription
+            if (stanza.is('presence')) {
+                if ('subscribe' === stanza.attrs.type) {
+                    privates.sendPresence(recipient, 'subscribed');
                 }
-    		}
+
+            // Chat message
+            } else if (stanza.is('message')) {
+                if ('chat' === stanza.attrs.type) {
+                    privates.sendMessage(recipient, 'Hello world')
+                }
+            }
     	};
     };
 
@@ -121,10 +115,9 @@ module.exports = function () {
             if (config.autoSubscribe) {
             	// Enable the bot to respond to subscription requests
             	connection.addListener('online', privates.requestGoogleRoster);
-            	connection.addListener('stanza', privates.becomeFriends);
             }
 
             connection.addListener('stanza', privates.dispatch(config))
         }
-    }
-}
+    };
+};
