@@ -97,6 +97,8 @@ module.exports = function () {
 
                     if (!cmd.type) {
                         privates.sendMessage(recipient, 'Unknown command');
+                    } else if (cmd.error) {
+                        privates.sendMessage(recipient, cmd.error);
                     } else {
                         privates.sendMessage(recipient, cmd.type);
                         /*backend.get(cmd, function (err, result) {

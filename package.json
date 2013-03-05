@@ -19,6 +19,7 @@
   "author": "André König <andre.koenig@gmail.com> (http://profile.lochkartenstanzer.de)",
   "license": "MIT",
   "dependencies": {
+    "moment": "2.0.x",
     "node-xmpp": "0.3.x",
     "request": "2.14.x",
     "settings": "0.1.x"
