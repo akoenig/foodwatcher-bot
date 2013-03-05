@@ -59,6 +59,10 @@ module.exports = function () {
 		// Check if the specified day is a Saturday or Sunday.
 		if (/0|6/.test(day)) {
 			cb(MESSAGES.CLOSED);
+
+		// Check if the requested day is in the next week.
+		// The food supplier interface provides just data
+		// for the current week.
 		} else if (isNextWeek) {
 			cb(MESSAGES.NO_DATA);
 		} else {
@@ -71,14 +75,14 @@ module.exports = function () {
 				cb(err, meals);
 			});
 		}
-	}
+	};
 
 	return {
 		treat : function (command, cb) {
 			if (/^help$|^mensen$/.test(command.type)) {
 				privates.executeServiceCommand(command, cb);
 			} else {
-				privates.executeMealCommand(command, cb)
+				privates.executeMealCommand(command, cb);
 			}
 		}
 	};

@@ -1,6 +1,6 @@
 {
   "name": "foodwatcher-bot",
-  "version": "0.1.0-1",
+  "version": "0.1.0-3",
   "description": "A little Google Talk bot which delivers the information from the Foodwatcher service.",
   "main": "index.js",
   "scripts": {
@@ -27,5 +27,6 @@
   },
   "engines": {
     "node": "0.8.x"
-  }
+  },
+  "subdomain": "foodwatcher-bot"
 }

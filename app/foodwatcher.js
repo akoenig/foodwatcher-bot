@@ -30,22 +30,22 @@ module.exports = function () {
 
     // DOCME
     privates.requestGoogleRoster = function () {
-    	var $roster = new xmpp.Element('iq', {
-    		from: connection.jid,
-    		type: 'get',
-    		id: 'google-roster'
-    	}).c('query', {
-    		xmlns: 'jabber:iq:roster',
-    		'xmlns:gr': 'google:roster',
-    		'gr:ext': '2' 
-    	});
+        var $roster = new xmpp.Element('iq', {
+            from: connection.jid,
+            type: 'get',
+            id: 'google-roster'
+        }).c('query', {
+            xmlns: 'jabber:iq:roster',
+            'xmlns:gr': 'google:roster',
+            'gr:ext': '2' 
+        });
 
-    	connection.send($roster);
+        connection.send($roster);
     };
 
     // DOCME
     privates.sendMessage = function (recipient, message) {
-    	var $elm = new xmpp.Element('message', {
+        var $elm = new xmpp.Element('message', {
             from: connection.jid,
             to: recipient,
             type: 'chat'
@@ -53,13 +53,14 @@ module.exports = function () {
 
         $elm.c('body').t(message);
 
-    	connection.send($elm);
+        connection.send($elm);
 
-    	console.log('[message] SENT: ' + $elm.up().toString());
+        console.log('[message] SENT: ' + $elm.up().toString());
     };
 
+    // DOCME
     privates.sendPresence = function (recipient, type) {
-        $response = new xmpp.Element('presence', {
+        var $response = new xmpp.Element('presence', {
             from: connection.jid,
             to: recipient,
             type: type
@@ -67,12 +68,12 @@ module.exports = function () {
 
         connection.send($response);
 
-        console.log('[presence] SENT: ' + $elm.up().toString());
-    }
+        console.log('[presence] SENT: ' + $response.up().toString());
+    };
 
     // DOCME
-    privates.dispatch = function (config) {
-    	return function (stanza) {
+    privates.dispatch = function () {
+        return function (stanza) {
             var cmd,
                 recipient;
 
@@ -93,24 +94,26 @@ module.exports = function () {
             // Chat message
             } else if (stanza.is('message')) {
                 if ('chat' === stanza.attrs.type) {
-                    cmd = command.parse(stanza.getChildText('body'));
+                    cmd = stanza.getChildText('body');
 
-                    if (cmd.error) {
-                        privates.sendMessage(recipient, cmd.error);
-                    } else {
-                        processor.treat(cmd, function (err, result) {
-                            if (err) {
-                                result = err;
-                            }
+                    if (cmd) {
+                        cmd = command.parse(cmd);
 
-                            privates.sendMessage(recipient, result);
-                        });
+                        if (cmd.error) {
+                            privates.sendMessage(recipient, cmd.error);
+                        } else {
+                            processor.treat(cmd, function (err, result) {
+                                if (err) {
+                                    result = err;
+                                }
+
+                                privates.sendMessage(recipient, result);
+                            });
+                        }
                     }
-
-                    
                 }
             }
-    	};
+        };
     };
 
     return {
@@ -120,7 +123,7 @@ module.exports = function () {
             connection.socket.setKeepAlive(true, config.keepAlive);
 
             connection.on('online', function () {
-                privates.setStatusMessage(config.status)
+                privates.setStatusMessage(config.status);
 
                 // Preventing timeouts
                 setInterval(function() {
@@ -129,15 +132,15 @@ module.exports = function () {
             });
 
             connection.on('error', function (stanza) {
-            	console.log("[ERROR] " + stanza.toString());
+                console.log("[ERROR] " + stanza.toString());
             });
 
             if (config.autoSubscribe) {
-            	// Enable the bot to respond to subscription requests
-            	connection.addListener('online', privates.requestGoogleRoster);
+                // Enable the bot to respond to subscription requests
+                connection.addListener('online', privates.requestGoogleRoster);
             }
 
-            connection.addListener('stanza', privates.dispatch(config))
+            connection.addListener('stanza', privates.dispatch(config));
             console.log("\n André, I'm alive!");
         }
     };

@@ -14,6 +14,8 @@ var moment = require('moment'),
 moment.lang('de');
 
 module.exports = function () {
+
+    'use strict';
     
     var mensen,
         privates = {},
@@ -26,10 +28,12 @@ module.exports = function () {
         var s,
             p;
 
-        s = 'http://foodspl.appspot.com/mensa?id={mensa}&format=json&week={week}&year={year}'
+        s = "http://foodspl.appspot.com/mensa?id={mensa}&format=json&week={week}&year={year}";
 
         for (p in data) {
-          s = s.replace(new RegExp('{'+p+'}','g'), data[p]);
+            if (data.hasOwnProperty(p)) {
+                s = s.replace(new RegExp('{'+p+'}','g'), data[p]);
+            }
         }
 
         return s;
@@ -38,32 +42,32 @@ module.exports = function () {
     mensen = {
         'air': {
             ids: /^air$|^airport$|^flughafen$|^flughafenallee$/,
-            description: '*air* - Airport (Hochschule)',
+            description: 'Airport (Hochschule)',
             meals: {}
         },
         'bhv': {
             ids: /^bhv$|^bremerhaven$/,
-            description: '*bhv* - Bremerhaven (Hochschule).',
+            description: 'Bremerhaven (Hochschule)',
             meals: {}
         },
         'gw2': {
             ids: /^gw2$|^unigw2$/,
-            description: '*gw2* - Cafeteria GW 2 (Universität)',
+            description: 'Cafeteria GW 2 (Universität)',
             meals: {}
         },
         'hsb': {
             ids: /^hsb$|^neustadtswall$/,
-            description: '*hsb* - Neustadtswall (Hochschule)',
+            description: 'Neustadtswall (Hochschule)',
             meals: {}
         },
         'uni': {
             ids: /^uni$|^uniboulevard$|^unimensa$/,
-            description: '*uni* - Uniboulevard (Universität)',
+            description: 'Uniboulevard (Universität)',
             meals: {}
         },
         'wer': {
             ids: /^wer$|^werderstrasse$|^uniboulevard$|^unimensa$/,
-            description: '*wer* - Werderstrasse (Hochschule)',
+            description: 'Werderstrasse (Hochschule)',
             meals: {}
         }
     };
@@ -84,45 +88,51 @@ module.exports = function () {
         request.get({
             url: url,
             json: true
-        }, function (err, response, data) {
+        }, function (err, res, data) {
             if (err) {
                 cb(err);
-                return;
-            }
+            } else if (res.statusCode === 200) {
+                data.menues.forEach(function (menu, index) {
+                    var timestamp = moment().day(index + 1).format(TIMESTAMP_FORMAT);
+                    mensen[mensa].meals[timestamp] = [];
 
-            data.menues.forEach(function (menu, index) {
-                var timestamp = moment().day(index + 1).format(TIMESTAMP_FORMAT);
-                mensen[mensa].meals[timestamp] = [];
-
-                menu.foods.forEach(function (food) {
-                    mensen[mensa].meals[timestamp].push({
-                        title: food.title,
-                        description: food.desc,
-                        studentprice: food.studentprice,
-                        staffprice: food.staffprice
+                    menu.foods.forEach(function (food) {
+                        mensen[mensa].meals[timestamp].push({
+                            title: food.title,
+                            description: food.desc,
+                            studentprice: food.studentprice,
+                            staffprice: food.staffprice
+                        });
                     });
                 });
-            });
 
-            cb(null, mensen[mensa].meals[date.format(TIMESTAMP_FORMAT)]);
+                cb(null, mensen[mensa].meals[date.format(TIMESTAMP_FORMAT)]);
+            } else {
+                cb('_Autsch! Das tut weh!_\n\n Die Datenschnittstelle, der FoodSupplier hat offensichtlich gerade technische Probleme. Wir arbeiten an dem Problem (HTTP StatusCode: ' + res.statusCode + ')');
+            }
         });
-
     };
 
     // DOCME
     privates.determineMensaKey = function (mensa) {
-        var tmp;
+        var found = mensen[mensa],
+            tmp;
 
-        if (!mensen[mensa]) {
+        if (!found) {
             search : for (tmp in mensen) {
                 if (mensen.hasOwnProperty(tmp)) {
                     if (mensen[tmp].ids.test(mensa)) {
                         mensa = tmp;
+                        found = true;
 
                         break search;
                     }
                 }
             }
+        }
+
+        if (!found) {
+        	mensa = undefined;
         }
 
         return mensa;
@@ -149,10 +159,10 @@ module.exports = function () {
                 prepareMenu;
 
             prepareMenu = function (mealEntries) {
-                var message = mensen[mensa].description + "\n\n _" + moment().day(weekDay).format('dddd, DD. MMMM YYYY') + "_ \n\n";
+                var message = "\n*" + mensen[mensa].description + "*" + "\n\n _" + moment().day(weekDay).format('dddd, DD. MMMM YYYY') + "_ \n\n";
 
                 mealEntries.forEach(function (meal) {
-                    message = message + "*" + meal.title + "*\n" + meal.description + "\n _" + meal.studentprice + " / " + meal.staffprice + "_ \n\n"
+                    message = message + "*" + meal.title + "*\n" + meal.description + "\n _" + meal.studentprice + " / " + meal.staffprice + "_ \n\n";
                 });
 
                 return message;
@@ -182,12 +192,12 @@ module.exports = function () {
         },
 
         getMensen : function (cb) {
-            var message = "_Die Mensen in Bremen_\n\n",
+            var message = "\n*Die Mensen in Bremen*\n\nUm die jeweiligen Speisepläne abrufen zu können, benötigst Du die folgenden fettgedruckten Kürzel. Dieses Kürzel kannst Du an den entsprechenden Befehl anhängen (z. B. *heute air*).\n\n",
                 tmp;
 
             for (tmp in mensen) {
                 if (mensen.hasOwnProperty(tmp)) {
-                    message = message + mensen[tmp].description + "\n\n";
+                    message = message + "*" + tmp + "*\n" + mensen[tmp].description + "\n\n";
                 }
             }
 
