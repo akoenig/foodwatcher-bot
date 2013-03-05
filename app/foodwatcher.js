@@ -9,6 +9,7 @@
  */
 
 var command   = require('./command')(),
+    messages  = require('./messages')(),
     processor = require('./processor')(),
     xmpp      = require('node-xmpp');
 
@@ -81,6 +82,8 @@ module.exports = function () {
 
             recipient = stanza.attrs.from;
 
+            console.log(stanza.toString());
+
             // Something bad happened
             if('error' === stanza.attrs.type) {
                 console.log("[ERROR] " + stanza.toString());
@@ -93,6 +96,8 @@ module.exports = function () {
                 switch (stanza.attrs.type) {
                     case 'subscribe':
                         privates.sendPresence(recipient, 'subscribed');
+
+                        privates.sendMessage(recipient, messages.get('HELP'));
                     break;
 
                     case 'unavailable':
@@ -153,7 +158,6 @@ module.exports = function () {
             }
 
             connection.addListener('stanza', privates.dispatch(config));
-            console.log("\n André, I'm alive!");
         }
     };
 };
