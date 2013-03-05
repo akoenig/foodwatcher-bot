@@ -8,7 +8,7 @@
  *
  */
 
-var backend = require('./backend')(),
+var processor = require('./processor')(),
     command = require('./command')(),
     xmpp = require('node-xmpp');
 
@@ -95,19 +95,16 @@ module.exports = function () {
                 if ('chat' === stanza.attrs.type) {
                     cmd = command.parse(stanza.getChildText('body'));
 
-                    if (!cmd.type) {
-                        privates.sendMessage(recipient, 'Unknown command');
-                    } else if (cmd.error) {
+                    if (cmd.error) {
                         privates.sendMessage(recipient, cmd.error);
                     } else {
-                        privates.sendMessage(recipient, cmd.type);
-                        /*backend.get(cmd, function (err, result) {
+                        processor.treat(cmd, function (err, result) {
                             if (err) {
                                 result = err;
                             }
 
                             privates.sendMessage(recipient, result);
-                        });*/
+                        });
                     }
 
                     

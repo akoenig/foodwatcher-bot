@@ -8,8 +8,6 @@
  *
  */
 
-var moment = require('moment');
-console.log(/0|6/.test(moment().day(moment().day() + 2).format('d')));
 module.exports = function () {
 
 	'use strict';
@@ -26,25 +24,7 @@ module.exports = function () {
 		'friday':           /^freitag$|^friday$|^fr$|^fri$/,
 		'help':             /^hilfe$|^help$/
 	},
-	MESSAGES = {
-		MENSA_MISSING: "_OHOHOH!_\n\nAngabe der Mensa fehlt! In welcher Mensa möchtest Du denn was essen?\n\nFür eine Übersicht nutze den Befehl: *mensen*",
-		CLOSED:        "_WOCHENENDE!!_\n\nDie Mensa ist zum angefragten Zeitpunkt leider geschlossen.",
-		CLOSED_TODAY:  "_WOCHENENDE!!_\n\nDie Mensa ist heute geschlossen. Genieße das Wochenende!"
-	},
 	SPLIT_CHR = " ";
-/*
-
-		mensen = [
-			{id: 'air', description: 'Mensa am Standort Flughafenallee'},
-			{id: 'bhv', description: 'Mensa in Bremerhaven'},
-			{id: 'gw2', description: 'Caféteria GW2'},
-			{id: 'hsb', description: 'Mensa am Standort Neustadtswall'},
-			{id: 'uni', description: 'Mensa am Uniboulevard'},
-			{id: 'wer', description: 'Mensa am Standort Werderstrasse'}
-		];
-
-
-*/
 
 	return {
 		parse : function (body) {
@@ -67,28 +47,18 @@ module.exports = function () {
 			}
 
 			if (type) {
-				console.log(type);
-				// Check if the current day is a Saturday or Sunday.
-				if (/today/.test(type) && /0|6/.test(moment().day(moment().day()).format('d'))) {
-					error = MESSAGES.CLOSED_TODAY;
-
-				// Check if tomorrow is a Saturday or Sunday.
-				} else if (/tomorrow/.test(type) && /0|6/.test(moment().day(moment().day() + 1).format('d'))) {
-					error = MESSAGES.CLOSED;
-
-				// Check if the day after tomorrow is a Saturday or Sunday.
-				} else if (/dayAfterTomorrow/.test(type) && /0|6/.test(moment().day(moment().day() + 2).format('d'))) {
-					error = MESSAGES.CLOSED;
-
-				// If the command is one which requires a mensa argument, check
-				// if it is there.
-				} else if (!(/mensen|help/.test(type)) && parts.length < 2) {
-					error = MESSAGES.MENSA_MISSING;
+				// If the command is one which requires a mensa argument,
+				// check if it is there.
+				if (!(/^mensen$|^help$/.test(type)) && parts.length < 2) {
+					error = "_OHOHOH!_\n\nAngabe der Mensa fehlt! In welcher Mensa möchtest Du denn was essen?\n\nFür eine Übersicht nutze den Befehl: *mensen*";
 				}
+			} else {
+				error = "_Hmmmm.._\n\nVerstehe den Befehl nicht. Wie Du mit mir kommunizierst findest Du über den Befehl *hilfe* heraus.";
 			}
 
 			return {
 				type: type,
+				mensa: parts[1],
 				error: error
 			};
 		}
