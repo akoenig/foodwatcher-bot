@@ -22,6 +22,10 @@ module.exports = function () {
 			case 'mensen':
 				supplier.getMensen(cb);
 			break;
+
+			case 'help':
+				cb(null, messages.get('HELP'));
+			break;
 		}
 	};
 
@@ -61,14 +65,7 @@ module.exports = function () {
 		} else if (isNextWeek) {
 			cb(messages.get('NO_DATA'));
 		} else {
-			supplier.getMeals(day, command.mensa, function (err, meals) {
-				if (err) {
-					cb(err);
-					return;
-				}
-
-				cb(err, meals);
-			});
+			supplier.getMeals(day, command.mensa, cb);
 		}
 	};
 

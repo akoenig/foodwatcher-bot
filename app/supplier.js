@@ -25,7 +25,7 @@ module.exports = function () {
 
     TIMESTAMP_FORMAT = 'YYYYMMDD';
 
-    SUPPLIER_URL = "http://foodpl.appspot.com/mensa?id={mensa}&format=json&week={week}&year={year}";
+    SUPPLIER_URL = "http://foodspl.appspot.com/mensa?id={mensa}&format=json&week={week}&year={year}";
 
     mensen = {
         'air': {
@@ -139,7 +139,7 @@ module.exports = function () {
         }
 
         console.log("... DONE");
-    }, 86400000);
+    }, 86400000); // Clearing the cache once a day.
 
     return {
         getMeals : function (weekDay, mensa, cb) {
@@ -161,6 +161,8 @@ module.exports = function () {
             if (!mensa) {
                 cb(messages.get('MENSA_NOT_FOUND'));
             } else {
+
+                // Check if we have a cached version of the requested data.
                 meals = mensen[mensa].meals[moment().day(weekDay).format(TIMESTAMP_FORMAT)];
 
                 if (!meals) {
