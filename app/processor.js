@@ -8,19 +8,14 @@
  *
  */
 
-var moment = require('moment'),
+var messages = require('./messages')(),
+    moment   = require('moment'),
 	supplier = require('./supplier')();
 
 module.exports = function () {
 	'use strict';
 
-	var privates = {},
-		MESSAGES;
-
-	MESSAGES = {
-		NO_DATA: "_Keine Daten verfügbar!_\n\nFür den angefragten Zeitraum liegen im Moment noch keine Daten vor. Versuche es später noch einmal.",
-		CLOSED:  "_WOCHENENDE!!_\n\nDie Mensa ist zum angefragten Zeitpunkt leider geschlossen. Genieße das Wochenende!"
-	};
+	var privates = {};
 
 	privates.executeServiceCommand = function (command, cb) {
 		switch (command.type) {
@@ -58,13 +53,13 @@ module.exports = function () {
 
 		// Check if the specified day is a Saturday or Sunday.
 		if (/0|6/.test(day)) {
-			cb(MESSAGES.CLOSED);
+			cb(messages.get('CLOSED'));
 
 		// Check if the requested day is in the next week.
 		// The food supplier interface provides just data
 		// for the current week.
 		} else if (isNextWeek) {
-			cb(MESSAGES.NO_DATA);
+			cb(messages.get('NO_DATA'));
 		} else {
 			supplier.getMeals(day, command.mensa, function (err, meals) {
 				if (err) {

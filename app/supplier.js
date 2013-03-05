@@ -8,8 +8,9 @@
  *
  */
 
-var moment = require('moment'),
-    request = require('request');
+var moment   = require('moment'),
+    messages = require('./messages')(),
+    request  = require('request');
 
 moment.lang('de');
 
@@ -24,20 +25,7 @@ module.exports = function () {
 
     TIMESTAMP_FORMAT = 'YYYYMMDD';
 
-    SUPPLIER_URL = function (data) {
-        var s,
-            p;
-
-        s = "http://foodspl.appspot.com/mensa?id={mensa}&format=json&week={week}&year={year}";
-
-        for (p in data) {
-            if (data.hasOwnProperty(p)) {
-                s = s.replace(new RegExp('{'+p+'}','g'), data[p]);
-            }
-        }
-
-        return s;
-    };
+    SUPPLIER_URL = "http://foodpl.appspot.com/mensa?id={mensa}&format=json&week={week}&year={year}";
 
     mensen = {
         'air': {
@@ -79,7 +67,7 @@ module.exports = function () {
 
         date = moment().day(weekDay);
 
-        url = SUPPLIER_URL({
+        url = messages.compile(SUPPLIER_URL, {
             mensa: mensa,
             week: date.format('w'),
             year: date.format('YYYY')
@@ -108,7 +96,7 @@ module.exports = function () {
 
                 cb(null, mensen[mensa].meals[date.format(TIMESTAMP_FORMAT)]);
             } else {
-                cb('_Autsch! Das tut weh!_\n\n Die Datenschnittstelle, der FoodSupplier hat offensichtlich gerade technische Probleme. Wir arbeiten an dem Problem (HTTP StatusCode: ' + res.statusCode + ')');
+                cb(messages.compile('API_ERROR', {status: res.statusCode}));
             }
         });
     };
@@ -171,7 +159,7 @@ module.exports = function () {
             mensa = privates.determineMensaKey(mensa);
 
             if (!mensa) {
-                cb('_Mensa existiert nicht._\n\n Die angegebene Mensa ist mir nicht bekannt. Schau noch mal über den Befehl: *mensen* nach.');
+                cb(messages.get('MENSA_NOT_FOUND'));
             } else {
                 meals = mensen[mensa].meals[moment().day(weekDay).format(TIMESTAMP_FORMAT)];
 
@@ -192,7 +180,7 @@ module.exports = function () {
         },
 
         getMensen : function (cb) {
-            var message = "\n*Die Mensen in Bremen*\n\nUm die jeweiligen Speisepläne abrufen zu können, benötigst Du die folgenden fettgedruckten Kürzel. Dieses Kürzel kannst Du an den entsprechenden Befehl anhängen (z. B. *heute air*).\n\n",
+            var message = messages.get('MENSEN_HEADLINE'),
                 tmp;
 
             for (tmp in mensen) {

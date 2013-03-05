@@ -8,6 +8,8 @@
  *
  */
 
+var messages = require('./messages')();
+
 module.exports = function () {
 
 	'use strict';
@@ -50,10 +52,10 @@ module.exports = function () {
 				// If the command is one which requires a mensa argument,
 				// check if it is there.
 				if (!(/^mensen$|^help$/.test(type)) && parts.length < 2) {
-					error = "_OHOHOH!_\n\nAngabe der Mensa fehlt! In welcher Mensa möchtest Du denn was essen?\n\nFür eine Übersicht nutze den Befehl: *mensen*";
+					error = messages.get('MISSING_MENSA');
 				}
 			} else {
-				error = "_Hmmmm.._\n\nVerstehe den Befehl nicht. Wie Du mit mir kommunizierst findest Du über den Befehl *hilfe* heraus.";
+				error = messages.get('UNKNOWN_COMMAND');
 			}
 
 			return {

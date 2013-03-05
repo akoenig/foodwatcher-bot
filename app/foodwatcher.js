@@ -8,9 +8,9 @@
  *
  */
 
-var processor = require('./processor')(),
-    command = require('./command')(),
-    xmpp = require('node-xmpp');
+var command   = require('./command')(),
+    processor = require('./processor')(),
+    xmpp      = require('node-xmpp');
 
 module.exports = function () {
 
@@ -21,9 +21,9 @@ module.exports = function () {
 
     // DOCME
     privates.setStatusMessage = function (message) {
-        var $presence = new xmpp.Element('presence', { })
-                        .c('show').t('chat').up()
-                        .c('status').t(message);
+        var $presence = new xmpp.Element('presence', {});
+
+        $presence.c('show').t('chat').up().c('status').t(message);
 
         connection.send($presence);
     };
@@ -34,7 +34,9 @@ module.exports = function () {
             from: connection.jid,
             type: 'get',
             id: 'google-roster'
-        }).c('query', {
+        });
+
+        $roster.c('query', {
             xmlns: 'jabber:iq:roster',
             'xmlns:gr': 'google:roster',
             'gr:ext': '2' 
@@ -82,35 +84,45 @@ module.exports = function () {
             // Something bad happened
             if('error' === stanza.attrs.type) {
                 console.log("[ERROR] " + stanza.toString());
+
                 return;
             }
 
             // Subscription
             if (stanza.is('presence')) {
-                if ('subscribe' === stanza.attrs.type) {
-                    privates.sendPresence(recipient, 'subscribed');
+                switch (stanza.attrs.type) {
+                    case 'subscribe':
+                        privates.sendPresence(recipient, 'subscribed');
+                    break;
+
+                    case 'unavailable':
+                        // TODO: Find a way to identify a leaving user.
+                    break;
                 }
 
             // Chat message
             } else if (stanza.is('message')) {
-                if ('chat' === stanza.attrs.type) {
-                    cmd = stanza.getChildText('body');
 
-                    if (cmd) {
-                        cmd = command.parse(cmd);
+                switch (stanza.attrs.type) {
+                    case 'chat':
+                        cmd = stanza.getChildText('body');
 
-                        if (cmd.error) {
-                            privates.sendMessage(recipient, cmd.error);
-                        } else {
-                            processor.treat(cmd, function (err, result) {
-                                if (err) {
-                                    result = err;
-                                }
+                        if (cmd) {
+                            cmd = command.parse(cmd);
 
-                                privates.sendMessage(recipient, result);
-                            });
+                            if (cmd.error) {
+                                privates.sendMessage(recipient, cmd.error);
+                            } else {
+                                processor.treat(cmd, function (err, result) {
+                                    if (err) {
+                                        result = err;
+                                    }
+
+                                    privates.sendMessage(recipient, result);
+                                });
+                            }
                         }
-                    }
+                    break;
                 }
             }
         };
