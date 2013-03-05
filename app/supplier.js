@@ -128,7 +128,7 @@ module.exports = function () {
             	var message = "_" + mensen[mensa].description + "(" + moment().day(weekDay).format() + ")_\n\n";
 
             	mealEntries.forEach(function (meal) {
-            		message = message + "*" + meal.title + "*\n" + meal.description + "_(" + meal.studentprice + "/" + meal.staffprice + ")\n\n_"
+            		message = message + "*" + meal.title + "*\n" + meal.description + "_(" + meal.studentprice + "/" + meal.staffprice + ")_\n\n"
             	});
 
             	return message;

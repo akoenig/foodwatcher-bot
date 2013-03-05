@@ -63,11 +63,11 @@ module.exports = function () {
 			cb(MESSAGES.NO_DATA);
 		} else {
 			supplier.getMeals(day, command.mensa, function (err, meals) {
-
 				if (err) {
 					cb(err);
 					return;
 				}
+
 				cb(err, meals);
 			});
 		}
