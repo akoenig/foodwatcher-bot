@@ -49,7 +49,7 @@ module.exports = function () {
             meals: {}
         },
         'uni': {
-            ids: /^uni$|^uniboulevard$|^unimensa$/,
+            ids: /^uni$|^uniboulevard$|^unimensa$|^universität$/,
             description: 'Uniboulevard (Universität)',
             meals: {}
         },
