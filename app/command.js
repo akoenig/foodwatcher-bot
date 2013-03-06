@@ -60,7 +60,7 @@ module.exports = function () {
 
 			return {
 				type: type,
-				mensa: parts[1],
+				mensa: parts[1].toLowerCase(),
 				error: error
 			};
 		}
