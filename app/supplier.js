@@ -29,7 +29,7 @@ module.exports = function () {
 
     mensen = {
         'air': {
-            ids: /^air$|^airport$|^flughafen$|^flughafenallee$/,
+            ids: /^air$|^airport$|^flughafen$|^flughafenallee$|^zimt$/,
             description: 'Airport (Hochschule)',
             meals: {}
         },
