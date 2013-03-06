@@ -1,7 +1,7 @@
 /*
  * Foodwatcher Bot
  *
- * "A little Google Talk bot which delivers the information from the Foodwatcher service.
+ * A little Google Talk bot which delivers the information from the FoodWatcher service.
  *
  * Copyright(c) 2013 André König <andre.koenig@gmail.com>
  * MIT Licensed
@@ -11,6 +11,7 @@
 'use strict';
 
 var bot      = require('./app/foodwatcher')(),
+    http     = require('http'),
 	Settings = require('settings');
 
 (function () {
@@ -20,6 +21,15 @@ var bot      = require('./app/foodwatcher')(),
 		config = new Settings(__dirname + '/config/gtalk.js').gtalk;
 
 		bot.startup(config);
+		 
+		http.createServer(
+		  function (request, response) {
+		    response.writeHead(200, {'Content-Type': 'text/plain'});
+		    response.end('FoodWatcher Bot\n');
+		  }
+		).listen(process.env.PORT);
+		 
+		console.log('Server running at http://localhost:8000/');
 	} catch (e) {
 		console.log(e);
 		console.log('[ERROR] Application is not configured. Verify your config directory.');
