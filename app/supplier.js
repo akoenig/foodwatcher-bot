@@ -25,7 +25,7 @@ module.exports = function () {
 
     TIMESTAMP_FORMAT = 'YYYYMMDD';
 
-    SUPPLIER_URL = "http://foospl.appspot.com/mensa?id={mensa}&format=json&week={week}&year={year}";
+    SUPPLIER_URL = "http://foodspl.appspot.com/mensa?id={mensa}&format=json&week={week}&year={year}";
 
     mensen = {
         'air': {
