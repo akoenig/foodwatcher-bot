@@ -131,12 +131,12 @@ module.exports = function () {
 
     return {
         startup : function (config) {
-            connection = new xmpp.Client(config.client);
+            connection = new xmpp.Client(config.gtalk.client);
             connection.socket.setTimeout(0);
-            connection.socket.setKeepAlive(true, config.keepAlive);
+            connection.socket.setKeepAlive(true, config.gtalk..keepAlive);
 
             connection.on('online', function () {
-                privates.setStatusMessage(config.status);
+                privates.setStatusMessage(config.gtalk..status);
 
                 // Preventing timeouts
                 setInterval(function() {
@@ -148,7 +148,7 @@ module.exports = function () {
                 console.log("[ERROR] " + stanza.toString());
             });
 
-            if (config.autoSubscribe) {
+            if (config.gtalk.autoSubscribe) {
                 // Enable the bot to respond to subscription requests
                 connection.addListener('online', privates.requestGoogleRoster);
             }

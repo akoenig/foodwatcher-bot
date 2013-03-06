@@ -10,23 +10,24 @@
 
 var winston = require('winston');
 
-'use strict';
+module.exports = function () {
+	'use strict';
 
-var logger = new (winston.Logger)({
-    transports: [
-	    new (winston.transports.Console)({ json: false, timestamp: true }),
-	    new winston.transports.File({ filename: __dirname + '/logs/debug.log', json: false })
-    ],
-  	exceptionHandlers: [
-	    new (winston.transports.Console)({ json: false, timestamp: true }),
-	    new winston.transports.File({ filename: __dirname + '/logs/exceptions.log', json: false })
-  	],
-  	exitOnError: false
-});
+	return {
+		create : function (config) {
+			var logger = new (winston.Logger)({
+			    transports: [
+				    new (winston.transports.Console)({ json: false, timestamp: true }),
+				    new winston.transports.File({ filename: __dirname + '/logs/debug.log', json: false })
+			    ],
+			  	exceptionHandlers: [
+				    new (winston.transports.Console)({ json: false, timestamp: true }),
+				    new winston.transports.File({ filename: __dirname + '/logs/exceptions.log', json: false })
+			  	],
+			  	exitOnError: false
+			});
 
-// Send the log files once a day to the foodwatch
-/*setInterval(function () {
-	
-});*/
-
-module.exports = logger;
+			return logger;			
+		}
+	};
+};

@@ -15,10 +15,11 @@ var bot      = require('./app/foodwatcher')(),
 	Settings = require('settings');
 
 (function () {
-	var config;
+	var config = {};
 
 	try {
-		config = new Settings(__dirname + '/config/gtalk.js').gtalk;
+		config.gtalk = new Settings(__dirname + '/config/gtalk.js').gtalk;
+		config.logger = new Settings(__dirname + '/config/logger.js').logger;
 
 		bot.startup(config);
 		 
