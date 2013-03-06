@@ -75,62 +75,58 @@ module.exports = function () {
     };
 
     // DOCME
-    privates.dispatch = function () {
-        return function (stanza) {
-            var cmd,
-                recipient;
+    privates.dispatch = function (stanza) {
+        var cmd,
+            recipient;
 
-            recipient = stanza.attrs.from;
+        recipient = stanza.attrs.from;
 
-            console.log(stanza.toString());
+        // Something bad happened
+        if('error' === stanza.attrs.type) {
+            console.log("[ERROR] " + stanza.toString());
 
-            // Something bad happened
-            if('error' === stanza.attrs.type) {
-                console.log("[ERROR] " + stanza.toString());
+            return;
+        }
 
-                return;
+        // Subscription
+        if (stanza.is('presence')) {
+            switch (stanza.attrs.type) {
+                case 'subscribe':
+                    privates.sendPresence(recipient, 'subscribed');
+
+                    privates.sendMessage(recipient, messages.get('HELP'));
+                break;
+
+                case 'unavailable':
+                    // TODO: Find a way to identify a leaving user.
+                break;
             }
 
-            // Subscription
-            if (stanza.is('presence')) {
-                switch (stanza.attrs.type) {
-                    case 'subscribe':
-                        privates.sendPresence(recipient, 'subscribed');
+        // Chat message
+        } else if (stanza.is('message')) {
 
-                        privates.sendMessage(recipient, messages.get('HELP'));
-                    break;
+            switch (stanza.attrs.type) {
+                case 'chat':
+                    cmd = stanza.getChildText('body');
 
-                    case 'unavailable':
-                        // TODO: Find a way to identify a leaving user.
-                    break;
-                }
+                    if (cmd) {
+                        cmd = command.parse(cmd);
 
-            // Chat message
-            } else if (stanza.is('message')) {
+                        if (cmd.error) {
+                            privates.sendMessage(recipient, cmd.error);
+                        } else {
+                            processor.treat(cmd, function (err, result) {
+                                if (err) {
+                                    result = err;
+                                }
 
-                switch (stanza.attrs.type) {
-                    case 'chat':
-                        cmd = stanza.getChildText('body');
-
-                        if (cmd) {
-                            cmd = command.parse(cmd);
-
-                            if (cmd.error) {
-                                privates.sendMessage(recipient, cmd.error);
-                            } else {
-                                processor.treat(cmd, function (err, result) {
-                                    if (err) {
-                                        result = err;
-                                    }
-
-                                    privates.sendMessage(recipient, result);
-                                });
-                            }
+                                privates.sendMessage(recipient, result);
+                            });
                         }
-                    break;
-                }
+                    }
+                break;
             }
-        };
+        }
     };
 
     return {
@@ -157,7 +153,7 @@ module.exports = function () {
                 connection.addListener('online', privates.requestGoogleRoster);
             }
 
-            connection.addListener('stanza', privates.dispatch(config));
+            connection.addListener('stanza', privates.dispatch);
         }
     };
 };
