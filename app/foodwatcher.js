@@ -112,6 +112,8 @@ module.exports = function () {
                     request = stanza.getChildText('body');
 
                     if (request) {
+                        request = request.toLowerCase();
+
                         cmd = command.parse(request);
 
                         if (cmd.error) {
