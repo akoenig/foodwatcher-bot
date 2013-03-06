@@ -58,9 +58,14 @@ module.exports = function () {
 				error = messages.get('UNKNOWN_COMMAND');
 			}
 
+			// Lower case for the "mensa" argument (if it is available).
+			if (parts[1]) {
+				parts[1] = parts[1].toLowerCase();
+			}
+
 			return {
 				type: type,
-				mensa: parts[1].toLowerCase(),
+				mensa: parts[1],
 				error: error
 			};
 		}

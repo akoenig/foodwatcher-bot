@@ -9,6 +9,7 @@
  */
 
 var command   = require('./command')(),
+    logger    = require('./logger')(),
     messages  = require('./messages')(),
     processor = require('./processor')(),
     xmpp      = require('node-xmpp');
@@ -58,7 +59,7 @@ module.exports = function () {
 
         connection.send($elm);
 
-        console.log('[message] SENT: ' + $elm.up().toString());
+        logger.debug(messages.compile("[RESPONSE] Sent message. Recipient: {recipient}", {recipient: recipient}));
     };
 
     // DOCME
@@ -70,20 +71,19 @@ module.exports = function () {
         });
 
         connection.send($response);
-
-        console.log('[presence] SENT: ' + $response.up().toString());
     };
 
     // DOCME
     privates.dispatch = function (stanza) {
         var cmd,
-            recipient;
+            recipient,
+            request;
 
         recipient = stanza.attrs.from;
 
         // Something bad happened
         if('error' === stanza.attrs.type) {
-            console.log("[ERROR] " + stanza.toString());
+            logger.error("[DISPATCH] Something bad happened while dispatching message: " + stanza.toString());
 
             return;
         }
@@ -92,6 +92,7 @@ module.exports = function () {
         if (stanza.is('presence')) {
             switch (stanza.attrs.type) {
                 case 'subscribe':
+                    logger.info(messages.compile("[SUBSCRIBE] ({recipient})", {recipient: recipient}));
                     privates.sendPresence(recipient, 'subscribed');
 
                     privates.sendMessage(recipient, messages.get('HELP'));
@@ -99,6 +100,7 @@ module.exports = function () {
 
                 case 'unavailable':
                     // TODO: Find a way to identify a leaving user.
+                    logger.info(messages.compile("[UNAVAILABLE] ({recipient})", {recipient: recipient}));
                 break;
             }
 
@@ -107,14 +109,17 @@ module.exports = function () {
 
             switch (stanza.attrs.type) {
                 case 'chat':
-                    cmd = stanza.getChildText('body');
+                    request = stanza.getChildText('body');
 
-                    if (cmd) {
-                        cmd = command.parse(cmd);
+                    if (request) {
+                        cmd = command.parse(request);
 
                         if (cmd.error) {
+                            logger.debug(messages.compile("[PARSING] Wrong command structure. Recipient: {recipient} - Request: {request}", {recipient: recipient, request: request}));
                             privates.sendMessage(recipient, cmd.error);
                         } else {
+                            logger.debug(messages.compile("[REQUEST] Recipient: {recipient} - Request: {request}", {recipient: recipient, request: request}));
+
                             processor.treat(cmd, function (err, result) {
                                 if (err) {
                                     result = err;
@@ -131,12 +136,17 @@ module.exports = function () {
 
     return {
         startup : function (config) {
+            // Creating the logger
+            logger = logger.create(config.logger);
+            logger.info("[BOOT] Let's go ...");
+
             connection = new xmpp.Client(config.gtalk.client);
             connection.socket.setTimeout(0);
-            connection.socket.setKeepAlive(true, config.gtalk..keepAlive);
+            connection.socket.setKeepAlive(true, config.gtalk.keepAlive);
 
             connection.on('online', function () {
-                privates.setStatusMessage(config.gtalk..status);
+                privates.setStatusMessage(config.gtalk.status);
+                logger.info("[BOOT] Ready to roll! Status: " + config.gtalk.status);
 
                 // Preventing timeouts
                 setInterval(function() {
@@ -145,7 +155,9 @@ module.exports = function () {
             });
 
             connection.on('error', function (stanza) {
-                console.log("[ERROR] " + stanza.toString());
+                logger.error("[CONNECTION] Something bad happened while a user tried to connect: " + stanza.toString());
+
+                return;
             });
 
             if (config.gtalk.autoSubscribe) {

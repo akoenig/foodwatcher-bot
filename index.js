@@ -12,28 +12,26 @@
 
 var bot      = require('./app/foodwatcher')(),
     http     = require('http'),
-	Settings = require('settings');
+    Settings = require('settings');
 
 (function () {
-	var config = {};
+    var config = {};
 
-	try {
-		config.gtalk = new Settings(__dirname + '/config/gtalk.js').gtalk;
-		config.logger = new Settings(__dirname + '/config/logger.js').logger;
+    try {
+        config.gtalk = new Settings(__dirname + '/config/gtalk.js').gtalk;
+        config.logger = new Settings(__dirname + '/config/logger.js').logger;
 
-		bot.startup(config);
-		 
-		http.createServer(
-		  function (request, response) {
-		    response.writeHead(200, {'Content-Type': 'text/plain'});
-		    response.end('FoodWatcher Bot\n');
-		  }
-		).listen(process.env.PORT);
-		 
-		console.log('Server running at http://localhost:8000/');
-	} catch (e) {
-		console.log(e);
-		console.log('[ERROR] Application is not configured. Verify your config directory.');
-		return;
-	}
+        bot.startup(config);
+         
+        http.createServer(
+          function (request, response) {
+            response.writeHead(200, {'Content-Type': 'text/plain'});
+            response.end('FoodWatcher Bot\n');
+          }
+        ).listen(process.env.PORT);
+    } catch (e) {
+        console.log(e);
+        console.log('[ERROR] Application is not configured. Verify your config directory.');
+        return;
+    }
 }());

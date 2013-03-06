@@ -1,3 +1,4 @@
 *node_modules*
 config/gtalk.js
+config/logger.js
 npm-debug.log
