@@ -12,6 +12,8 @@ var fs         = require('fs'),
 	nodemailer = require('nodemailer'),
     winston    = require('winston');
 
+require('winston-mail').Mail;
+
 module.exports = function () {
     'use strict';
 
@@ -31,18 +33,32 @@ module.exports = function () {
 
     return {
         create : function (config) {
-            var logger;
+            var logger,
+            	mailLogger;
 
             privates.deleteLogs();
+
+            mailLogger = {
+            	to: "foodwatcher.bot+important@gmail.com",
+            	from: config.mail.from,
+            	host: config.mail.host,
+            	username: config.mail.auth.user,
+            	password: config.mail.auth.pass,
+            	subject: "Important message.",
+            	level: "info",
+            	ssl: true
+            };
 
             logger = new (winston.Logger)({
                 transports: [
                     new (winston.transports.Console)({ json: false, timestamp: true }),
-                    new winston.transports.File({ filename: directory + "debug.log", json: false })
+                    new winston.transports.File({ filename: directory + "debug.log", json: false }),
+                    new (winston.transports.Mail)(mailLogger)
                 ],
                 exceptionHandlers: [
                     new (winston.transports.Console)({ json: false, timestamp: true }),
-                    new winston.transports.File({ filename: directory + "exceptions.log", json: false })
+                    new winston.transports.File({ filename: directory + "exceptions.log", json: false }),
+                    new (winston.transports.Mail)(mailLogger)
                 ],
                 exitOnError: false
             });

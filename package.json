@@ -25,7 +25,8 @@
     "node-xmpp": "0.3.x",
     "request": "2.14.x",
     "settings": "0.1.x",
-    "winston": "0.6.x"
+    "winston": "0.6.x",
+    "winston-mail": "0.2.x"
   },
   "engines": {
     "node": "0.8.x"

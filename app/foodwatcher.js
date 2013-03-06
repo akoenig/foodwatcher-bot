@@ -122,6 +122,7 @@ module.exports = function () {
 
                             processor.treat(cmd, function (err, result) {
                                 if (err) {
+                                    logger.error("[PROCESSOR] Error occured while processing command: " + JSON.stringify(err));
                                     result = err;
                                 }
 

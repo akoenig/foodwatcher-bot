@@ -12,10 +12,11 @@ module.exports = {
     common: {
         logger: {
             mail: {
-                from:    "FoodWatcher Bot ✔ <foodwatcher.bot@gmail.com>",
-                to:      "foodwatcher.bot@gmail.com",
+                from:    "FoodWatcher Bot - Logs ✔ <foodwatcher.bot@gmail.com>",
+                to:      "foodwatcher.bot+logs@gmail.com",
                 subject: "Daily logs",
                 service: "Gmail",
+                host:    "smtp.gmail.com",
                 auth: {
                     user: "foodwatcher.bot@gmail.com",
                     pass: "INSERT_PASSWORD_HERE"
@@ -27,10 +28,11 @@ module.exports = {
     production: {
         logger: {
             mail: {
-                from:    "FoodWatcher Bot ✔ <foodwatcher.bot@gmail.com>",
-                to:      "foodwatcher.bot@gmail.com",
+                from:    "FoodWatcher Bot - Logs ✔ <foodwatcher.bot@gmail.com>",
+                to:      "foodwatcher.bot+logs@gmail.com",
                 subject: "Daily logs",
                 service: "Gmail",
+                host:    "smtp.gmail.com",
                 auth: {
                     user: "foodwatcher.bot@gmail.com",
                     pass: "INSERT_PASSWORD_HERE"
