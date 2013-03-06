@@ -1,5 +1,5 @@
 /*
- * Foodwatcher Bot
+ * FoodWatcher Bot
  *
  * A little Google Talk bot which delivers the information from the FoodWatcher service.
  *
