@@ -100,7 +100,7 @@ module.exports = function () {
 
                 case 'unavailable':
                     // TODO: Find a way to identify a leaving user.
-                    logger.info(messages.compile("[UNAVAILABLE] ({recipient})", {recipient: recipient}));
+                    // logger.info(messages.compile("[UNAVAILABLE] ({recipient})", {recipient: recipient}));
                 break;
             }
 
