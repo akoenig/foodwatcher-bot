@@ -11,6 +11,8 @@
 var moment = require('moment'),
     request = require('request');
 
+moment.lang('de');
+
 module.exports = function () {
     
     var mensen,
@@ -36,7 +38,7 @@ module.exports = function () {
     mensen = {
         'air': {
             ids: /^air$|^airport$|^flughafen$|^flughafenallee$/,
-            description: '*air* - Airport (Hochschule).',
+            description: '*air* - Airport (Hochschule)',
             meals: {}
         },
         'bhv': {
@@ -83,10 +85,10 @@ module.exports = function () {
             url: url,
             json: true
         }, function (err, response, data) {
-        	if (err) {
-        		cb(err);
-        		return;
-        	}
+            if (err) {
+                cb(err);
+                return;
+            }
 
             data.menues.forEach(function (menu, index) {
                 var timestamp = moment().day(index + 1).format(TIMESTAMP_FORMAT);
@@ -107,6 +109,24 @@ module.exports = function () {
 
     };
 
+    privates.determineMensaKey = function (mensa) {
+        var tmp;
+
+        if (!mensen[mensa]) {
+            search : for (tmp in mensen) {
+                if (mensen.hasOwnProperty(tmp)) {
+                    if (mensen[tmp].ids.test(mensa)) {
+                        mensa = tmp;
+
+                        break search;
+                    }
+                }
+            }
+        }
+
+        return mensa;
+    };
+
     // DOCME
     setInterval(function () {
         var tmp;
@@ -121,33 +141,34 @@ module.exports = function () {
     return {
         getMeals : function (weekDay, mensa, cb) {
             var meals,
-            	prepareMenu;
+                prepareMenu;
 
             prepareMenu = function (mealEntries) {
+                var message = mensen[mensa].description + "\n\n _" + moment().day(weekDay).format('dddd, DD. MMMM YYYY') + "_ \n\n";
 
-            	var message = "_" + mensen[mensa].description + "(" + moment().day(weekDay).format() + ")_\n\n";
+                mealEntries.forEach(function (meal) {
+                    message = message + "*" + meal.title + "*\n" + meal.description + "\n _" + meal.studentprice + " / " + meal.staffprice + "_ \n\n"
+                });
 
-            	mealEntries.forEach(function (meal) {
-            		message = message + "*" + meal.title + "*\n" + meal.description + "_(" + meal.studentprice + "/" + meal.staffprice + ")_\n\n"
-            	});
-
-            	return message;
+                return message;
             };
 
-            if (!mensen[mensa]) {
+            mensa = privates.determineMensaKey(mensa);
+
+            if (!mensa) {
                 cb('_Mensa existiert nicht._\n\n Die angegebene Mensa ist mir nicht bekannt. Schau noch mal über den Befehl: *mensen* nach.');
             } else {
                 meals = mensen[mensa].meals[moment().day(weekDay).format(TIMESTAMP_FORMAT)];
 
                 if (!meals) {
                     privates.loadMeals(weekDay, mensa, function (err, results) {
-                    	if (err) {
-                    		cb(err);
+                        if (err) {
+                            cb(err);
 
-                    		return;
-                    	}
+                            return;
+                        }
 
-                    	cb(null, prepareMenu(results));
+                        cb(null, prepareMenu(results));
                     });
                 } else {
                     cb(null, prepareMenu(meals));
