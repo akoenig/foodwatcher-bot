@@ -109,6 +109,7 @@ module.exports = function () {
 
     };
 
+    // DOCME
     privates.determineMensaKey = function (mensa) {
         var tmp;
 
@@ -131,12 +132,16 @@ module.exports = function () {
     setInterval(function () {
         var tmp;
 
+        console.log("CLEARING CACHE ... ");
+
         for (tmp in mensen) {
             if (mensen.hasOwnProperty(tmp)) {
                 mensen[tmp].meals = {};
             }
         }
-    }, 3000000);
+
+        console.log("... DONE");
+    }, 86400000);
 
     return {
         getMeals : function (weekDay, mensa, cb) {
