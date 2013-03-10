@@ -17,3 +17,17 @@ Have fun :)
 ## Author
 
 Copyright (c) 2013, [André König](http://lochkartenstanzer.de) ([Google+](http://profile.lochkartenstanzer.de)) (andre.koenig -[at]- gmail [*dot*] com)
+
+## Changelog
+
+### v0.1.1 (20130310)
+
+* Fixed problem with Markdown formatting on Android clients.
+* Fixed problem with the command "day after tomorrow" (e.g. day-after-tomorrow air).
+* New command for determine the bot version (e.g. version)
+* Created README file with installation instructions.
+
+### v0.1.0 (20130306)
+
+* Implemented complete command architecture for receiving meals plans from all "Mensen" in Bremen.
+* Initial version
