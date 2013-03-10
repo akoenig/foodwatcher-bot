@@ -11,15 +11,14 @@
 'use strict';
 
 var bot      = require('./app/foodwatcher')(),
-    http     = require('http'),
-    Settings = require('settings');
+    http     = require('http');
 
 (function () {
     var config = {};
 
     try {
-        config.gtalk = new Settings(__dirname + '/config/gtalk.js').gtalk;
-        config.logger = new Settings(__dirname + '/config/logger.js').logger;
+        config.gtalk = require(__dirname + '/config/gtalk.json');
+        config.logger = require(__dirname + '/config/logger.json');
 
         bot.startup(config);
          
