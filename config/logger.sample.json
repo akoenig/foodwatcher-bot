@@ -1,12 +1,14 @@
 {
-    "from":    "FoodWatcher Bot - Logs ✔ <foodwatcher.bot@gmail.com>",
-    "to":      "foodwatcher.bot+logs@gmail.com",
-    "subject": "Daily logs",
-    "service": "Gmail",
-    "host":    "smtp.gmail.com",
-    "auth": {
-        "user": "foodwatcher.bot@gmail.com",
-        "pass": "INSERT_PASSWORD_HERE"
-    },
-    "interval": 86400000 // Once a day.
+    "mail": {
+        "from":    "FoodWatcher Bot - Logs ✔ <foodwatcher.bot@gmail.com>",
+        "to":      "foodwatcher.bot+logs@gmail.com",
+        "subject": "Daily logs",
+        "service": "Gmail",
+        "host":    "smtp.gmail.com",
+        "auth": {
+            "user": "foodwatcher.bot@gmail.com",
+            "pass": "INSERT_PASSWORD_HERE"
+        },
+        "interval": 86400000
+    }
 }
