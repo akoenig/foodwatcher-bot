@@ -10,6 +10,7 @@
 
 var messages = require('./messages')(),
     moment   = require('moment'),
+    pkg      = require(__dirname + '/../package.json');
 	supplier = require('./supplier')();
 
 module.exports = function () {
@@ -25,6 +26,10 @@ module.exports = function () {
 
 			case 'help':
 				cb(null, messages.get('HELP'));
+			break;
+
+			case 'version':
+				cb(null, pkg.version);
 			break;
 		}
 	};
@@ -71,7 +76,7 @@ module.exports = function () {
 
 	return {
 		treat : function (command, cb) {
-			if (/^help$|^mensen$/.test(command.type)) {
+			if (/^help$|^mensen$|^version$/.test(command.type)) {
 				privates.executeServiceCommand(command, cb);
 			} else {
 				privates.executeMealCommand(command, cb);

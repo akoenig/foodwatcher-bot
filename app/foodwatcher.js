@@ -49,11 +49,22 @@ module.exports = function () {
 
     // DOCME
     privates.sendMessage = function (recipient, message) {
-        var $elm = new xmpp.Element('message', {
+        var $elm,
+            supportsMarkdown;
+
+        supportsMarkdown = (/\/gmail|TalkGadget/.test(recipient));
+
+        $elm = new xmpp.Element('message', {
             from: connection.jid,
             to: recipient,
             type: 'chat'
         });
+
+        // Remove the markdown if the client does not have the
+        // possibility to display it correctly.
+        if (!supportsMarkdown) {
+            message = message.replace(/\*|_/g, "");
+        }
 
         $elm.c('body').t(message);
 
@@ -93,6 +104,7 @@ module.exports = function () {
             switch (stanza.attrs.type) {
                 case 'subscribe':
                     logger.info(messages.compile("[SUBSCRIBE] ({recipient})", {recipient: recipient}));
+
                     privates.sendPresence(recipient, 'subscribed');
 
                     privates.sendMessage(recipient, messages.get('HELP'));
@@ -118,6 +130,7 @@ module.exports = function () {
 
                         if (req.error) {
                             logger.debug(messages.compile("[PARSING] Wrong command structure. Recipient: {recipient} - Request: {request}", {recipient: recipient, request: request}));
+
                             privates.sendMessage(recipient, req.error);
                         } else {
                             logger.debug(messages.compile("[REQUEST] Recipient: {recipient} - Request: {request}", {recipient: recipient, request: request}));
