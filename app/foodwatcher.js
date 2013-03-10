@@ -8,7 +8,7 @@
  *
  */
 
-var command   = require('./command')(),
+var request   = require('./request')(),
     logger    = require('./logger')(),
     messages  = require('./messages')(),
     processor = require('./processor')(),
@@ -75,9 +75,9 @@ module.exports = function () {
 
     // DOCME
     privates.dispatch = function (stanza) {
-        var cmd,
+        var req,
             recipient,
-            request;
+            command;
 
         recipient = stanza.attrs.from;
 
@@ -109,20 +109,20 @@ module.exports = function () {
 
             switch (stanza.attrs.type) {
                 case 'chat':
-                    request = stanza.getChildText('body');
+                    command = stanza.getChildText('body');
 
-                    if (request) {
-                        request = request.toLowerCase();
+                    if (command) {
+                        command = command.toLowerCase();
 
-                        cmd = command.parse(request);
+                        req = request.parse(command);
 
-                        if (cmd.error) {
+                        if (req.error) {
                             logger.debug(messages.compile("[PARSING] Wrong command structure. Recipient: {recipient} - Request: {request}", {recipient: recipient, request: request}));
-                            privates.sendMessage(recipient, cmd.error);
+                            privates.sendMessage(recipient, req.error);
                         } else {
                             logger.debug(messages.compile("[REQUEST] Recipient: {recipient} - Request: {request}", {recipient: recipient, request: request}));
 
-                            processor.treat(cmd, function (err, result) {
+                            processor.treat(req, function (err, result) {
                                 if (err) {
                                     logger.error("[PROCESSOR] Error occured while processing command: " + JSON.stringify(err));
                                     result = err;
