@@ -18,7 +18,7 @@ module.exports = function () {
         'mensen':           /^mensen$|^mensas$|^mensa$/,
         'today':            /^heute$|^today$/,
         'tomorrow':         /^morgen$|^tomorrow$/,
-        'dayAfterTomorrow': /^übermorgen$|^day\safter\stomorrow$|^dayaftertomorrow$/,
+        'dayAfterTomorrow': /^übermorgen$|^day after tomorrow$|^dayaftertomorrow$/,
         'monday':           /^montag$|^monday$|^mo$|^mon$/,
         'tuesday':          /^dienstag$|^tuesday$|^di$|^tue$/,
         'wednesday':        /^mittwoch$|^wednesday$|^mi$|^wed$/,

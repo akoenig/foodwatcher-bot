@@ -96,7 +96,7 @@ module.exports = function () {
 
                 cb(null, mensen[mensa].meals[date.format(TIMESTAMP_FORMAT)]);
             } else {
-                cb(messages.compile('API_ERROR', {status: res.statusCode}));
+                cb(messages.compile('API_ERROR', {status: res.statusCode, message: data}));
             }
         });
     };
