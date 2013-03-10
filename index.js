@@ -10,8 +10,8 @@
 
 'use strict';
 
-var bot      = require('./app/foodwatcher')(),
-    http     = require('http');
+var bot  = require('./app/foodwatcher')(),
+    http = require('http');
 
 (function () {
     var config = {};
