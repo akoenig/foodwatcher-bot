@@ -133,7 +133,7 @@ module.exports = function () {
 
                             privates.sendMessage(recipient, req.error);
                         } else {
-                            logger.debug(messages.compile("[REQUEST] Recipient: {recipient} - Request: {request}", {recipient: recipient, request: request.type}));
+                            logger.debug(messages.compile("[REQUEST] Recipient: {recipient} - Request: {request}", {recipient: recipient, request: req.type}));
 
                             processor.treat(req, function (err, result) {
                                 if (err) {
