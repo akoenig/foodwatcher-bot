@@ -17,7 +17,7 @@
     "gtalk",
     "google"
   ],
-  "author": "André König <andre.koenig@gmail.com> (http://profile.lochkartenstanzer.de)",
+  "author": "André König <andre.koenig@gmail.com>",
   "license": "MIT",
   "dependencies": {
     "moment": "2.0.x",
